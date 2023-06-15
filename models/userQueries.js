@@ -1,6 +1,6 @@
 require("dotenv").config();
 const password = process.env.DATABASE_PASSWORD;
-
+const bcrypt = require("bcrypt");
 const Pool = require("pg").Pool;
 const pool = new Pool({
   user: "postgres",
@@ -23,6 +23,41 @@ const getAllUsers = (req, res) => {
   });
 };
 
+const createNewUser = (req, res) => {
+  const { email, firstName, lastName, password } = req.body;
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+
+  pool.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+    (error, results) => {
+      if (error) {
+        res.status(500).send("Internal server error");
+        return;
+      }
+
+      if (results.rows.length > 0) {
+        res.status(400).send("Account by that email already exists");
+        return;
+      }
+
+      pool.query(
+        "INSERT INTO users (email,password,firstName,lastName) VALUES ($1,$2,$3,$4)",
+        [email, hashedPassword, firstName, lastName],
+        (error, results) => {
+          if (error) {
+            res.status(500).send("Internal server error");
+            return;
+          }
+          res.status(201).send("User added successfully");
+        }
+      );
+    }
+  );
+};
+
 module.exports = {
   getAllUsers,
+  createNewUser
 };
