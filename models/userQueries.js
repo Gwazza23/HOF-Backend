@@ -57,7 +57,35 @@ const createNewUser = (req, res) => {
   );
 };
 
+const getUserByEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(results.rows[0]);
+      }
+    );
+  });
+};
+
+const getUserById = (id) => {
+  return new Promise((resolve, reject) => {
+    pool.query("SELECT * FROM users WHERE id  = $1", [id], (error, results) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(results.rows[0]);
+    });
+  });
+};
+
 module.exports = {
   getAllUsers,
-  createNewUser
+  createNewUser,
+  getUserByEmail,
+  getUserById
 };
