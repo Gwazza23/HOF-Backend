@@ -53,8 +53,15 @@ userRouter.post("/login", (req, res, next) => {
         return next(err);
       }
       req.session.regenerate(() => {
-        res.cookie("user_id", req.user.id);
-        res.send("You are now logged in!");
+        const userId = user.id
+        res.cookie("user_id", req.user.id, {
+          secure: true,
+          httpOnly: false,
+          sameSite: "none",
+          maxAge: 24 * 60 * 60 * 1000,
+          path: '/'
+        });
+        res.send({userId});
       });
     });
   })(req, res, next);
