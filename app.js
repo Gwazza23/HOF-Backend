@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const userRouter = require("./routes/userRouter");
+const productsRouter = require("./routes/productsRouter");
 const passport = require("passport");
 
 app.use(cookieParser());
@@ -17,7 +18,12 @@ app.use(
     secret: process.env.SESSION_PASSWORD,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000, httpOnly: false, sameSite: 'none' },
+    cookie: {
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: "none",
+    },
   })
 );
 
@@ -25,7 +31,7 @@ app.use(
   cors({
     origin: "https://magnificent-narwhal-1e5ee7.netlify.app",
     credentials: true,
-    exposedHeaders: ['set-cookie'],
+    exposedHeaders: ["set-cookie"],
   })
 );
 
@@ -42,6 +48,7 @@ app.use(passport.session());
 
 app.use(bodyParser.json());
 app.use("/users", userRouter);
+app.use("/products", productsRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening to PORT ${PORT}`);
