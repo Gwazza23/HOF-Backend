@@ -40,6 +40,10 @@ passport.deserializeUser((id, done) => {
 
 userRouter.get("/profile/:id", db.getUserDataById)
 userRouter.get("/", db.getAllUsers);
+userRouter.get("/logout", (req,res) => {
+  req.logout(() => {})
+  res.send('you are now logged out')
+})
 userRouter.post("/register", db.createNewUser);
 userRouter.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
