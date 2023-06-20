@@ -38,6 +38,7 @@ passport.deserializeUser((id, done) => {
   done(null, user);
 });
 
+userRouter.get("/profile/:id", db.getUserDataById)
 userRouter.get("/", db.getAllUsers);
 userRouter.post("/register", db.createNewUser);
 userRouter.post("/login", (req, res, next) => {

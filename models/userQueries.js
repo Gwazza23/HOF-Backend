@@ -83,9 +83,25 @@ const getUserById = (id) => {
   });
 };
 
+const getUserDataById = async (req, res) => {
+  const id = req.params.id;
+  pool.query(
+    "SELECT email,firstName,lastName FROM users WHERE id = $1",
+    [id],
+    (error, results) => {
+      if (error) {
+        res.status(500).send("internal server error");
+        return;
+      }
+      res.send(results.rows);
+    }
+  );
+};
+
 module.exports = {
   getAllUsers,
   createNewUser,
   getUserByEmail,
-  getUserById
+  getUserById,
+  getUserDataById
 };
