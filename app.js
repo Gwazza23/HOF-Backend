@@ -9,6 +9,7 @@ const cors = require("cors");
 
 const userRouter = require("./routes/userRouter");
 const productsRouter = require("./routes/productsRouter");
+const cartRouter =require('./routes/cartRouter')
 const passport = require("passport");
 
 app.use(cookieParser());
@@ -49,6 +50,7 @@ app.use(passport.session());
 app.use(bodyParser.json());
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
+app.use("/cart", cartRouter)
 
 app.listen(PORT, () => {
   console.log(`Listening to PORT ${PORT}`);
