@@ -50,7 +50,7 @@ cartRouter.post("/", async (req, res) => {
     const { product_id, quantity } = req.body;
     try {
       const cart = await db.updateItemInCart(
-        req.cookies.userId,
+        req.cookies.user_id,
         product_id,
         quantity
       );
@@ -61,7 +61,6 @@ cartRouter.post("/", async (req, res) => {
   });
   
   cartRouter.delete("/:id", async (req, res) => {
-    console.log(req.cookies.user_id)
     try {
       const cart = await db.deleteItemInCart(req.cookies.user_id, req.params.id);
       res.status(204).send(cart);

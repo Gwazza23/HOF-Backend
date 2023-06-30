@@ -10,19 +10,22 @@ const pool = new Pool({
 });
 
 const getUserCart = (id) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      "SELECT products.id, products.name, products.img_url ,cart.quantity,cart.price * cart.quantity AS total_price FROM cart,products WHERE products.id = cart.product_id AND user_id= $1",
-      [id],
-      (error, results) => {
-        if (error) {
-          reject(error);
+    return new Promise((resolve, reject) => {
+      pool.query(
+        "SELECT products.id, products.name, products.quantity AS max_quantity, products.img_url, cart.quantity, cart.price * cart.quantity AS total_price FROM cart, products WHERE products.id = cart.product_id AND user_id = $1",
+        [id],
+        (error, results) => {
+          if (error) {
+            reject(error);
+          } else if (!results || !results.rows) {
+            reject(new Error("No rows returned from the query."));
+          } else {
+            resolve(results.rows);
+          }
         }
-        resolve(results.rows);
-      }
-    );
-  });
-};
+      );
+    });
+  };
 
 const addItemToCart = (user_id,product_id,quantity,price) => {
     return new Promise((resolve,reject) => {
