@@ -65,7 +65,6 @@ userRouter.post("/login", (req, res, next) => {
         maxAge: 24 * 60 * 60 * 1000,
         path: "/",
       });
-      console.log(req.user);
       res.send({ userId });
     });
   })(req, res, next);
