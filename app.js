@@ -13,7 +13,7 @@ const cartRouter = require("./routes/cartRouter");
 const passport = require("passport");
 
 app.use(cookieParser());
-
+app.use(bodyParser.json());
 app.use(
   session({
     secret: process.env.SESSION_PASSWORD,
@@ -30,7 +30,7 @@ app.use(
 
 app.use(
   cors({
-    origin: "https://magnificent-narwhal-1e5ee7.netlify.app",
+    origin: "https://houseoffashion.netlify.app",
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })
@@ -39,7 +39,7 @@ app.use(
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://magnificent-narwhal-1e5ee7.netlify.app"
+    "https://houseoffashion.netlify.app"
   );
   next();
 });
@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(bodyParser.json());
+
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/cart", cartRouter);

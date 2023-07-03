@@ -30,21 +30,21 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-  const user = db.getUserById(id, (err, done) => {
+  db.getUserById(id, (err, user) => {
     if (err) {
       return done(err);
     }
+    done(null, user);
   });
-  done(null, user);
 });
 
-userRouter.get("/profile/:id", db.getUserDataById)
-userRouter.get("/", db.getAllUsers);
-userRouter.get("/logout", (req,res) => {
-  req.logout(() => {})
-  res.send('you are now logged out')
-})
-userRouter.post("/register", db.createNewUser);
+const isAuthenticated = (req, res, next) => {
+  if (req.params.id === req.cookies["user_id"]) {
+    return next();
+  }
+  res.status(401).send("Unauthorized");
+};
+
 userRouter.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -57,19 +57,26 @@ userRouter.post("/login", (req, res, next) => {
       if (err) {
         return next(err);
       }
-      req.session.regenerate(() => {
-        const userId = user.id
-        res.cookie("user_id", req.user.id, {
-          secure: true,
-          httpOnly: false,
-          sameSite: "none",
-          maxAge: 24 * 60 * 60 * 1000,
-          path: '/'
-        });
-        res.send({userId});
+      const userId = user.id;
+      res.cookie("user_id", req.user.id, {
+        secure: true,
+        httpOnly: false,
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000,
+        path: "/",
       });
+      console.log(req.user);
+      res.send({ userId });
     });
   })(req, res, next);
 });
+userRouter.get("/profile/:id", isAuthenticated, db.getUserDataById);
+userRouter.get("/", db.getAllUsers);
+userRouter.get("/logout", (req, res) => {
+  req.logout(() => {});
+  res.send("you are now logged out");
+});
+userRouter.post("/register", db.createNewUser);
+userRouter.post("/info", db.addInfo);
 
 module.exports = userRouter;

@@ -23,6 +23,22 @@ const getAllUsers = (req, res) => {
   });
 };
 
+const addInfo = (req, res) => {
+  const { id, phone, addressLine1, addressLine2, city, state, postcode, country } = req.body;
+  pool.query(
+    "UPDATE users SET phone = $1, addressline1 = $2, addressline2 = $3, city = $4, state = $5, postcode = $6, country = $7 WHERE id = $8",
+    [phone, addressLine1, addressLine2, city, state, postcode, country, id],
+    (error, results) => {
+      if (error) {
+        res.status(500).send(error.message);
+        return;
+      }
+      res.status(201).send("Details updated successfully");
+    }
+  );
+};
+
+
 const createNewUser = (req, res) => {
   const { email, firstName, lastName, password } = req.body;
   const salt = bcrypt.genSaltSync(10);
@@ -86,7 +102,7 @@ const getUserById = (id) => {
 const getUserDataById = async (req, res) => {
   const id = req.params.id;
   pool.query(
-    "SELECT email,firstName,lastName FROM users WHERE id = $1",
+    "SELECT email,firstName,lastName,phone,addressline1,addressline2,city,state,postcode,country FROM users WHERE id = $1",
     [id],
     (error, results) => {
       if (error) {
@@ -103,5 +119,6 @@ module.exports = {
   createNewUser,
   getUserByEmail,
   getUserById,
-  getUserDataById
+  getUserDataById,
+  addInfo
 };
